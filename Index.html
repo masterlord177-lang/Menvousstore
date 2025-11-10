@@ -1,0 +1,348 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>MENVOUS STORE</title>
+  <style>
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: 'Poppins', sans-serif;
+      background-color: #f1fff4;
+      color: #1a2e05;
+      display: flex;
+      min-height: 100vh;
+    }
+
+    /* SIDEBAR */
+    .sidebar {
+      width: 200px;
+      background-color: #16a34a;
+      display: flex;
+      flex-direction: column;
+      padding: 20px 10px;
+      transition: transform 0.3s ease;
+      color: white;
+    }
+    .sidebar h1 {
+      font-size: 1.4rem;
+      margin: 0 0 20px 10px;
+      font-weight: 700;
+    }
+    .nav-link {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      color: white;
+      text-decoration: none;
+      padding: 10px 15px;
+      border-radius: 8px;
+      margin: 4px 5px;
+      font-weight: 600;
+      transition: background-color 0.2s;
+    }
+    .nav-link:hover, .nav-link.active {
+      background-color: #15803d;
+    }
+
+    /* MAIN */
+    main {
+      flex: 1;
+      padding: 20px;
+      overflow-y: auto;
+    }
+    main section { display: none; }
+    main section.active { display: block; }
+
+    /* HEADER MOBILE */
+    header {
+      display: none;
+      align-items: center;
+      justify-content: space-between;
+      background-color: #16a34a;
+      padding: 10px 15px;
+      color: white;
+    }
+    .menu-btn { font-size: 1.6rem; cursor: pointer; }
+
+    /* CARD PRODUK */
+    .cards-container {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 15px;
+    }
+    .card {
+      background-color: #dcfce7;
+      border-radius: 10px;
+      width: 150px;
+      padding: 12px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      box-shadow: 0 0 6px rgba(0,0,0,0.1);
+    }
+    .card img {
+      width: 80px;
+      height: 80px;
+      object-fit: contain;
+      margin-bottom: 10px;
+      border-radius: 5px;
+    }
+    .card .title { font-weight: 600; text-align: center; color: #065f46; }
+    .card .subtitle { font-size: 0.8rem; color: #16a34a; margin-bottom: 12px; }
+    .card button {
+      background-color: #16a34a;
+      border: none;
+      padding: 8px 25px;
+      border-radius: 7px;
+      color: white;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background-color 0.3s;
+    }
+    .card button:hover { background-color: #15803d; }
+
+    /* PRODUK DETAIL */
+    .product-card {
+      background-color: #f0fdf4;
+      border-radius: 12px;
+      padding: 15px;
+      margin-bottom: 20px;
+      display: flex;
+      gap: 15px;
+      align-items: flex-start;
+      box-shadow: 0 0 6px rgba(0,0,0,0.1);
+      max-width: 480px;
+    }
+    .product-card img {
+      width: 120px;
+      border-radius: 7px;
+      object-fit: cover;
+    }
+    .product-description { font-size: 0.95rem; margin-bottom: 8px; }
+    .price { font-weight: 700; margin-bottom: 6px; }
+    .price mark { background: none; color: #16a34a; }
+    .stock { font-size: 0.9rem; }
+    .out-of-stock { color: #dc2626; font-weight: 700; }
+    .detail-btn {
+      background-color: #16a34a;
+      color: white;
+      font-weight: 700;
+      padding: 8px 16px;
+      border-radius: 8px;
+      text-decoration: none;
+      transition: background-color 0.3s;
+      display: inline-block;
+      margin-top: 8px;
+    }
+    .detail-btn:hover { background-color: #15803d; }
+
+      /* CHECK INVOICE (VERSI AWAL DIPULIHKAN) */
+    .check-form {
+      background-color: #dcfce7;
+      border-radius: 10px;
+      padding: 15px;
+      margin-bottom: 30px;
+      max-width: 480px;
+    }
+    label { display: block; margin-bottom: 8px; font-weight: 600; }
+    input[type="text"] {
+      width: 100%;
+      padding: 12px;
+      border-radius: 7px;
+      border: none;
+      margin-bottom: 15px;
+      background-color: #f0fdf4;
+      color: #14532d;
+    }
+    .check-form button {
+      width: 100%;
+      background-color: #16a34a;
+      border: none;
+      padding: 12px;
+      color: white;
+      font-size: 1.1rem;
+      border-radius: 7px;
+      cursor: pointer;
+      font-weight: 600;
+    }
+    .check-form button:hover { background-color: #15803d; }
+  
+    @media (max-width: 768px) {
+      .sidebar {
+        position: fixed; top: 0; left: 0;
+        height: 100%;
+        transform: translateX(-100%);
+        z-index: 10;
+      }
+      .sidebar.show { transform: translateX(0); }
+      header { display: flex; position: fixed; top: 0; width: 100%; z-index: 9; }
+      main { margin-top: 60px; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- SIDEBAR -->
+  <div class="sidebar" id="sidebar">
+    <h1>🌿 MENVOUS STORE</h1>
+    <a href="#" class="nav-link active" onclick="showSection('home', this)">🏠 HOME</a>
+    <a href="#" class="nav-link" onclick="showSection('invoice', this)">💳 CHECK INVOICE</a>
+    <a href="#" class="nav-link" onclick="showSection('fishit', this)">🎣 AKUN FISH IT</a>
+    <a href="#" class="nav-link" onclick="showSection('coin', this)">🪙 COIN FISH IT</a>
+    <a href="#" class="nav-link" onclick="showSection('secret', this)">🐟 SECRET TUMBAL</a>
+  </div>
+
+  <!-- HEADER MOBILE -->
+  <header>
+    <h2>MENVOUS STORE</h2>
+    <div class="menu-btn" onclick="toggleSidebar()">☰</div>
+  </header>
+
+  <!-- KONTEN -->
+  <main>
+    <!-- HOME -->
+    <section id="home" class="active">
+      <h2>KATEGORI PRODUK</h2>
+      <div class="cards-container">
+        <div class="card">
+          <img src="https://i.ibb.co.com/mF5z2wpP/G4yz-Zqc-XUAA2-IBJ.jpg" alt="Akun Fish It">
+          <div class="title">🎣 AKUN FISH IT</div>
+          <div class="subtitle">AKUN GAME</div>
+          <button onclick="showSection('fishit')">BELI</button>
+        </div>
+        
+        <div class="card">
+          <img src="https://i.ibb.co.com/nNt0dvbR/2173-png-1200.png" alt="Akun Fish It">
+          <div class="title">🪙 COIN FISH IT</div>
+          <div class="subtitle">COIN GAME</div>
+          <button onclick="showSection('coin')">BELI</button>
+        </div>
+        
+        <div class="card">
+          <img src="https://i.ibb.co.com/rRjpKRmH/Tumbal-Rahasia-di-Dermaga.png" alt="Secret Tumbal">
+          <div class="title">🔮 SECRET TUMBAL</div>
+          <div class="subtitle">PRODUK SPECIAL</div>
+          <button onclick="showSection('secret')">BELI</button>
+        </div>
+        
+      </div>
+    </section>
+
+    <!-- CHECK INVOICE -->
+<section id="invoice">
+  <h2>Check Invoice</h2>
+  <form class="check-form" onsubmit="checkInvoice(); return false;">
+    <label for="invoice-code">Masukkan Kode Invoice</label>
+    <input type="text" id="invoice-code" placeholder="Contoh: PP165xxxx" required>
+    <button type="submit">Cek Invoice</button>
+  </form>
+  <p id="invoice-result" style="font-weight:600; margin-top:10px;"></p>
+</section>
+
+
+    <!-- AKUN FISH IT -->
+    <section id="fishit">
+      <h2>🎣 AKUN FISH IT</h2>
+      <div id="produk-container"></div>
+    </section>
+
+    <!-- COIN FISH IT -->
+    <section id="coin">
+      <h2>🪙 COIN FISH IT</h2>
+      <div id="coin-container"></div>
+    </section>
+
+    <!-- SECRET TUMBAL -->
+    <section id="secret">
+      <h2>🐟 SECRET TUMBAL</h2>
+      <div id="secret-container"></div>
+    </section>
+  </main>
+
+  <script>
+    const produkList = [
+      { nama: "[DATVER] AKUN ELEMENT ROD + SINGULARITY", harga: 250000, stok: 1, terjual: 16, gambar: "https://i.ibb.co.com/7d8HNCTC/element.jpg" },
+      { nama: "[NOEMAIL] AKUN ELEMENT ROD POLOS", harga: 200000, stok: 0, terjual: 8, gambar: "https://i.ibb.co/HDTzDZv9/images.jpg" },
+      { nama: "[NOEMAIL] AKUN GHOSTFIN ROD + SINGULARITY", harga: 60000, stok: 0, terjual: 8, gambar: "https://i.ibb.co.com/nsMFtZvR/ghostfinnn.jpg" },
+      { nama: "[NOEMAIL] AKUN GHOSTFIN ROD POLOS", harga: 57500, stok: 0, terjual: 8, gambar: "https://i.ibb.co.com/whJPbysT/ghostfinn.jpg" },
+      { nama: "[NOEMAIL] AKUN BAMBOO ROD + SINGULARITY", harga: 55000, stok: 0, terjual: 8, gambar: "https://i.ibb.co.com/q3G1vhTp/20251110-035841.jpg" },
+      { nama: "[NOEMAIL] Akun BAMBOO ROD POLOS", harga: 52500, stok: 0, terjual: 8, gambar: "https://i.ibb.co.com/DDrwx2SV/bamboo.jpg" },
+      { nama: "[NOEMAIL] AKUN ANGLER + SINGULARITY", harga: 45000, stok: 0, terjual: 8, gambar: "https://i.ibb.co.com/Mk0ZkQV0/20251110-035822.jpg" },
+      { nama: "[NOEMAIL] AKUN ANGLER ROD POLOS", harga: 40000, stok: 0, terjual: 8, gambar: "https://i.ibb.co.com/QjNWrLDS/angler.jpg.jpg" },
+      { nama: "[NOEMAIL] AKUN ARES + SINGULARITY", harga: 37500, stok: 0, terjual: 8, gambar: "https://i.ibb.co.com/KjQZyvZz/20251110-035750.jpg" },
+      { nama: "[NOEMAIL] AKUN ARES ROD POLOS", harga: 35000, stok: 0, terjual: 8, gambar: "https://i.ibb.co.com/v4C7KvVB/20251108-012622.jpg" },
+      { nama: "[NOEMAIL] AKUN HAZMAT ROD POLOS", harga: 30000, stok: 0, terjual: 8, gambar: "https://i.ibb.co.com/1GyY6sJB/hazmat.jpg" },
+      { nama: "[NOEMAIL] Akun ASTRAL ROD POLOS", harga: 30000, stok: 0, terjual: 8, gambar: "https://i.ibb.co.com/gMynrYxz/astral.jpg" },
+    ];
+  
+  
+
+    const coinList = [
+      { nama: "1M COIN FISH IT (VIA SECRET)", harga: 45000, stok: 5, terjual: 20, gambar: "https://i.ibb.co.com/YY4Ms1z/download.png" },
+      { nama: "1M COIN FISH IT (VIA MITOS)", harga: 20000, stok: 3, terjual: 10, gambar: "https://i.ibb.co/HDTzDZv9/images.jpg" },
+    ];
+
+    const secretList = [
+      { nama: "SECRET TUMBAL SULTAN", harga: 15000, stok: 2, terjual: 5, gambar: "https://i.ibb.co.com/TqY4DgYy/Screenshot-20251110-102006-Roblox.jpg" },
+      { nama: "SECRET TUMBAL", harga: 7000, stok: 0, terjual: 8, gambar: "https://i.ibb.co.com/GYcrxVf/Screenshot-20251110-101845-Roblox.jpg" },
+    ]
+
+    function tampilkanProduk(list, containerId) {
+      const container = document.getElementById(containerId);
+      container.innerHTML = "";
+      list.forEach(p => {
+        const isHabis = p.stok <= 0;
+        container.innerHTML += `
+          <div class="product-card">
+            <img src="${p.gambar}" alt="${p.nama}">
+            <div>
+              <p class="product-description">${p.nama}</p>
+              <p class="price">Rp <mark>${p.harga.toLocaleString()}</mark></p>
+              <p class="stock">Stok: ${isHabis ? `<span class='out-of-stock'>Habis</span>` : p.stok}</p>
+              <p>${p.terjual} Terjual</p>
+              <a href="https://wa.me/6282364492977?text=Halo%20Admin,%20saya%20ingin%20pesan%20${encodeURIComponent(p.nama)}" class="detail-btn" target="_blank">Pesan Sekarang</a>
+            </div>
+          </div>
+        `;
+      });
+    }
+
+  function checkInvoice() {
+      const code = document.getElementById("invoice-code").value.trim();
+      const result = document.getElementById("invoice-result");
+
+      if (!code) {
+        result.textContent = "⚠️ Silakan masukkan kode invoice terlebih dahulu.";
+        result.style.color = "#dc2626";
+        return;
+      }
+
+      result.style.color = "#065f46";
+      result.textContent = `✅ Invoice ${code} ditemukan. Silakan hubungi admin untuk konfirmasi lebih lanjut.`;
+    }
+
+    function showSection(id, el) {
+      document.querySelectorAll("main section").forEach(s => s.classList.remove("active"));
+      document.getElementById(id).classList.add("active");
+      document.querySelectorAll(".nav-link").forEach(a => a.classList.remove("active"));
+      if (el) el.classList.add("active");
+      if (window.innerWidth <= 768 && el ) toggleSidebar();
+      if (id === 'fishit') tampilkanProduk(produkList, 'produk-container');
+      if (id === 'coin') tampilkanProduk(coinList, 'coin-container');
+      if (id === 'secret') tampilkanProduk(secretList, 'secret-container');
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    }
+
+    function toggleSidebar() {
+      document.getElementById("sidebar").classList.toggle("show");
+    }
+
+    tampilkanProduk(produkList, 'produk-container');
+    tampilkanProduk(coinList, 'coin-container');
+    tampilkanProduk(secretList, 'secret-container');
+  </script>
+
+</body>
+</html>
